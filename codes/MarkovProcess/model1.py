@@ -48,6 +48,8 @@ class Battery:
         return f"Battery: charging: {self.E_b} p: {self.p} max_charge: {self.E_b_max} min_charge: {self.E_b_min} "
     
     def discharge(self):
+        if(self.E_b == 0):
+            raise Exception("Battery is empty")
         self.E_b -= 1
         
     def charge(self):
@@ -66,8 +68,10 @@ class Decider:
         self.last_transmitted_value = 0       # Last predicted value
         self.P = P
         self.bat = bat
-        
         self.define_reward()
+        self.define_transitions()
+        
+        
         
         
     def define_reward(self):
@@ -79,6 +83,18 @@ class Decider:
                         reward[i1][i2][i3][j] = -self.P[self.states[i1][i2][i3]][self.states[i1][i2][i3]]
                         
         self.reward = reward
+        
+    def define_transitions(self):
+        self.transitions = np.zeros((self.num_states[0], self.num_states[1], self.num_states[2], len(self.actions), self.num_states[0], self.num_states[1], self.num_states[2]))
+        for i1 in range(self.num_states[0]):
+            for i2 in range(self.num_states[1]):
+                for i3 in range(self.num_states[2]):
+                    for j in range(len(self.actions)):
+                        if self.actions[j]:
+                            self.transitions[i1][i2][i3][j][i1][i2][i3] = 1
+                        else:
+                            self.transitions[i1][i2][i3][j][i1][i2][i3] = 1
+        
         
     
     def sample_next_action(self, state, policy):
