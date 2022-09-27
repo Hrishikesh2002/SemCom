@@ -1,0 +1,19 @@
+30th August:
+
+1) The problem so far:
+
+\section{System Model and Problem Formulation}
+We consider a setup where a transmitter senses a discrete-time random process with finite number of states. The destination is interested in receiving information from the transmitter as freshly and accurately as possible. The transmitter is powered by an energy harvesting source. We consider a time-slotted system, where the slots are indexed by $t$. Let $E_t$ be the amount of energy harvested in slot $t\in \{1,2,\ldots\}$.  
+Let $W_t$ is the process being monitored with $N$ possible states. At the start slot $t$, the transmitter predicts the realization of the random process at slot $t$. Let the matrix $P\in \mathbb{R}^{N\times N}$ the error between the predicted and true value, where $P_{i,j}$ is the error when the true realization was $i$ and the prediction is $j$ for $i,j\in\{1,2,\ldots,N\}$. The transmitter needs to make a decision on whether to sample the process and transmit it at each slot. Let $S_t$ an $I_t$ be the decision variables which capture whether the transmitter samples and transits an information packet at time $t$ or not, respectively. $S_t=1$ ($I_t=1$) denotes  an information packet is sampled (transmitted) and   $S_t=0$ ($I_t=0$) denotes an information packet is not sampled (not transmitted). Since we cannot transmit without sampling, it must be true that $I_t =1 $, then $S_t$ must be necessarily $1$.
+
+2) Another Problem that can be thought of:
+	 
+	The transmitter in general settings can transmit only if it samples from the environment. But the cost of sampling might be very high. So, the transmitter can keep learning the model of the process on the go, and if the p percent of the last u time slots predicted values match with the sampled values, then the transmitter will keep sending the predicted values for the next U time slots. It will again compare the predicted and sampled values for the next u time slots and if again p percent is correct, 
+it resumes sending predicted values for the next U time slots. Else, if the accuracy is found to be lower, the transmitter will switch back to sending the sampled values for the next U time slots. This pattern will keep repeating.
+
+3) Another Problem:
+	Whenever the reciever doesn't recieve any signal, it can assume that either the transmitter has gone down, or the signal is not of high importance. In this case, it will predict two value considering both scenarios, and take average of the two (if the data is continuous), else it decides one of the two based on some evidence for the two scenarios.
+	
+4) In the random process, the value of the random variable might depend on the previous value(i.e. sequential, not iid), eg:
+	i) x_t = alpha * x_(t-1) + noise
+	ii) x_t = alpha_0 * x_(t-1) + alpha_1 * x_(t-2)^2 , etc
