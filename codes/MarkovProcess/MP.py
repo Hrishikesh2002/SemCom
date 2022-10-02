@@ -1,10 +1,11 @@
 
 import random
+import numpy as np
 
 class MarkovProcess:
     def __init__(self, states, transitions) -> None:
         self.states = states
-        self.transitions = transitions
+        self.transitions = np.array(transitions)
         
     def __repr__(self) -> str:
         return f"MarkovProcess(states={self.states}, transitions={self.transitions})"
@@ -25,7 +26,7 @@ class MarkovProcess:
 class MP:
     def __init__(self, states, transitions) -> None:
         self.states = states
-        self.transitions = transitions
+        self.transitions = np.array(transitions)
         
     
     def __repr__(self) -> str:
