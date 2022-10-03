@@ -88,7 +88,7 @@ class Decider:
                         else:
                             self.transitions[current_state][action][next_state] = 0
                             
-        print("\n\nTransitions:  ", self.transitions)
+        # print("\n\nTransitions:  ", self.transitions)
                     
             
     def define_reward(self):
@@ -100,11 +100,10 @@ class Decider:
             
             
     def policy_iteration(self):
-        print('a')
+        # print('a')
         self.policy_stable = False
         
         while not self.policy_stable:
-            self.policy_stable = True
             self.policy_evaluation()
             self.policy_improvement()
             
@@ -141,10 +140,12 @@ class Decider:
             
             for action in self.actions:
                 action_reward = self.reward[current_state][action]
+                for next_state in self.states:
+                    action_reward += self.transitions[current_state][action][next_state] * self.discount_factor * self.value[next_state]
+                if action_reward > max_value:
+                        max_value = action_reward
                 action_reward_list.append(action_reward)
 
-                if action_reward > max_value:
-                    max_value = action_reward
             
             num_max_actions = action_reward_list.count(max_value)
             
@@ -154,8 +155,6 @@ class Decider:
             
             
         if self.policy_convergence():
-            print("\n\npolicy: ", self.policy)
-            print("\n\nnew policy: ", self.new_policy)
             self.policy_stable = True
             
         self.policy = self.new_policy
@@ -164,6 +163,9 @@ class Decider:
     def value_convergence(self):
         val_arr = [v for v in self.value.values()]
         new_val_arr = [v for v in self.new_value.values()]
+        
+        # print("\n\nval_arr: ", val_arr)
+        # print("\n\nnew_val_arr: ", new_val_arr)
         
         if(np.allclose(val_arr, new_val_arr, atol=1e-4)):
             return True
@@ -174,6 +176,9 @@ class Decider:
     def policy_convergence(self):
         pol_arr = [[v[j] for j in [0,1]] for v in self.policy.values()]
         new_pol_arr = [[v[j] for j in [0,1]] for v in self.new_policy.values()]
+        
+        # print("\n\npol_arr: ", pol_arr)
+        # print("\n\nnew_pol_arr: ", new_pol_arr)
         
         if(np.allclose(pol_arr, new_pol_arr, atol=1e-4)):
             return True
@@ -200,12 +205,12 @@ def states_generator(no_of_w, no_of_w_hat, no_of_E_b):
     return states
 
 def driver():
-    states = [0,1]
-    transitions = [[0, 1], [0, 1]]
-    P = [[0, 1], [1, 0]]
+    states = [0, 1, 2]
+    transitions = [[0.1,0.1 ,0.8 ], [0.1, 0.1, 0.8], [0.1, 0.1, 0.8]]
+    P = [[0, 0, 100], [0, 0, 100], [0, 0, 0]]
     
     mp = MP(states, transitions)
-    bat = Battery(2, 1)
+    bat = Battery(3, 1)
     
     states_arr = states_generator(len(mp.states), len(mp.states), bat.E_b_max + 1)
     actions_arr = [0,1]
