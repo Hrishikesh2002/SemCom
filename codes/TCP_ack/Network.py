@@ -1,5 +1,4 @@
 import time
-import random
 import scipy.stats as dist
 import matplotlib.pyplot as plt
 import numpy as np

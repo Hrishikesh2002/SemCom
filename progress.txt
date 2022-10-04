@@ -17,3 +17,5 @@ it resumes sending predicted values for the next U time slots. Else, if the accu
 4) In the random process, the value of the random variable might depend on the previous value(i.e. sequential, not iid), eg:
 	i) x_t = alpha * x_(t-1) + noise
 	ii) x_t = alpha_0 * x_(t-1) + alpha_1 * x_(t-2)^2 , etc
+	
+

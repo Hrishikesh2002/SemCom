@@ -1,3 +1,5 @@
+#This would be an efficent implementation than model 1, but needs to be fixed.
+
 import random
 import numpy as np
 from MP import MP
