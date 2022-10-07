@@ -86,8 +86,7 @@ class Reciever:
 
         
     def acknowledge_packet(self, packet):
-        self.last_received_time = packet.acknowledged_time = self.clock.get_time()
-        self.last_acknowledged_id = packet.id
+        packet.acknowledged_time = self.clock.get_time()
         
         
         
@@ -108,7 +107,7 @@ class MDP_acknowledger:
         
         
 class Algorithm_acknowledger:
-    def __init__(self, receiver, z=0.00000000003) -> None:
+    def __init__(self, receiver, z=0.0001) -> None:
         self.receiver = receiver
         self.z = z
     
@@ -127,12 +126,15 @@ class Algorithm_acknowledger:
             start = self.receiver.last_acknowledged_time
             end = self.receiver.clock.get_time()
 
-            offset = (start - end)/10
+            offset = (end - start)/10
+
 
             for i in range(10):
+
                 if self.calculate_packets_in_interval(start + offset*i, start + offset*(i+1)) * (offset*(9-i)) >= self.z:
                     for i in range(self.receiver.last_acknowledged_id, self.receiver.queue[-1].id + 1):
                         self.receiver.acknowledge_packet(self.receiver.queue[i])
+
                         
                     self.receiver.last_acknowledged_time = self.receiver.clock.get_time()
                     self.receiver.last_acknowledged_id = self.receiver.queue[-1].id
@@ -140,12 +142,7 @@ class Algorithm_acknowledger:
                 
 
             
-            
-        
-    
-
-      
-    
+         
 
 class TCP_simulation:
     

@@ -1,4 +1,3 @@
-import random
 import numpy as np
 from MP import MP
 from scipy.stats import bernoulli
@@ -192,13 +191,6 @@ class Decider:
 
 
 def states_generator(no_of_w, no_of_w_hat, no_of_E_b):
-    # states = [(0,0,0) for i in range(no_of_w * no_of_w_hat * no_of_E_b)]
-    # k=0
-    # for w in range(no_of_w):
-    #     for w_hat in range(no_of_w_hat):
-    #         for E_b in range(no_of_E_b):
-    #             states[k] = (w, w_hat, E_b)
-    #             k += 1
     
     states = [(i,j,k) for i in range(no_of_w) for j in range(no_of_w_hat) for k in range(no_of_E_b)]
                 
@@ -207,7 +199,7 @@ def states_generator(no_of_w, no_of_w_hat, no_of_E_b):
 def driver():
     states = [0, 1, 2]
     transitions = [[0.1,0.1 ,0.8 ], [0.1, 0.1, 0.8], [0.1, 0.1, 0.8]]
-    P = [[0, 0, 100], [0, 0, 100], [0, 0, 0]]
+    P = [[0, 100, 100], [100, 0, 100], [100, 100, 0]]
     
     mp = MP(states, transitions)
     bat = Battery(3, 1)
