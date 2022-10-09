@@ -6,7 +6,7 @@ class MarkovDecisionProcess:
 
     self.states = states
     self.num_states = len(self.states)
-    # transitions are s*t*s
+    # transitions shape is s*t*s
     self.transitions = transitions
     self.discount_factor = discount_factor
     self.reward = reward
