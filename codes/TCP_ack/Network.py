@@ -93,15 +93,26 @@ class Reciever:
         
 class MDP_acknowledger:
     
-    def __init__(self, receiver) -> None:
-        self.receiver = receiver
-        self.states = self.generate_states
-        self.transitions = self.generate_transitions
-        self.reward = self.generate_reward
-        self.actions = [0, 1]
+    def __init__(self, packets : list, precision = 0.001) -> None:
+        self.packets = packets
+        self.time_precision = precision
+        
+    def create_states(self) -> None:
+        self.states = []
+        self.states = np.arange(0, self.packets[-1].arrival_time, self.time_precision)
+        self.action_space = [0, 1]
+        self.transitions = np.ones((len(self.states), len(self.states)))*(1/len(self.states))
+        
+        
+        
+        
+        
+    # def run(self):
+    #     for packet in self.packets:
+            
+        
     
-    def generate_states(self):
-        num_packets = len(self.receiver.queue)
+    
         
         
         
@@ -111,7 +122,7 @@ class Algorithm_acknowledger:
         self.receiver = receiver
         self.z = z
     
-    
+    #For each interval, calculate the number of packets in the interval
     def calculate_packets_in_interval(self, t, t_p):
         num_packets = 0
         for packet in self.receiver.queue:
@@ -119,7 +130,7 @@ class Algorithm_acknowledger:
                 num_packets += 1
         return num_packets
     
-    
+    #At the given instant, decide whether to acknowledge or not
     def decide(self):
         if len(self.receiver.queue) > 0 and self.receiver.last_acknowledged_id != self.receiver.queue[-1].id:
             
@@ -130,6 +141,7 @@ class Algorithm_acknowledger:
 
 
             for i in range(10):
+                
 
                 if self.calculate_packets_in_interval(start + offset*i, start + offset*(i+1)) * (offset*(9-i)) >= self.z:
                     for i in range(self.receiver.last_acknowledged_id, self.receiver.queue[-1].id + 1):
@@ -154,7 +166,9 @@ class TCP_simulation:
         self.current_state = 0
         self.next_state = 0
         self.ack = ack
-        
+    
+    
+    #Select acknowledgement algorithm and run the simulation    
     def run(self):
         
         if(self.ack == 0):
@@ -173,10 +187,13 @@ class TCP_simulation:
             self.transmittor.generate_packet()
             self.reciever.receive_packet(self.transmittor.transmit_packet())
             self.acknowledger.decide()
-            self.current_time = self.clock.get_time() 
+            self.current_time = self.clock.get_time()
             
         for packets in self.reciever.queue:
             print(packets)
+        
+    def get_recieved_packets(self):
+        return self.reciever.queue
         
             
                    
@@ -186,5 +203,9 @@ def driver():
     clock = Clock()
     sim = TCP_simulation(0, clock, 0)
     sim.run()
+    packets = sim.get_recieved_packets()
+    
+    
+    
     
 driver()
