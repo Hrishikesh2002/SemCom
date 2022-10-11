@@ -1,7 +1,5 @@
 import numpy as np
 import random
-from def_state import state
-
 
 class MP:
     def __init__(self, states, transitions) -> None:

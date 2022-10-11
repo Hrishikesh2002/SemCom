@@ -1,19 +1,20 @@
 import mdptoolbox
 import numpy as np
 import math
-from def_state import state
+from def_state import mdp_state
 
 class MDP_sampler:
     def __init__(self, process, timelimit=5, sampling_cost=1, f=[[0,1], [1,0]]) -> None:
-       self.process = process
-       self.timelimit = timelimit
-       self.actions = [0,1]
-       self.f = f # predicted_value * actual_value
-       self.sampling_cost = sampling_cost
-       self.define_states()
-       self.define_transitions()
-       self.mle = self.calc_mle()
-       self.define_reward()
+        self.state = mdp_state(0,0)
+        self.process = process
+        self.timelimit = timelimit
+        self.actions = [0,1]
+        self.f = f # predicted_value * actual_value
+        self.sampling_cost = sampling_cost
+        self.define_states()
+        self.define_transitions()
+        self.calc_mle()
+        self.define_reward()
        
        
     def calc_mle(self):
@@ -28,17 +29,15 @@ class MDP_sampler:
             
         mle = np.argmax(T_final[0])
         
-        print(T_new)
-        
-        return mle
+        self.mle = mle
         
         
      
      
      
     def define_states(self):
-        # Define states as (last sampled state, time since last sample) i.e. (s,t)
-        self.states = [state(i,j) for i in range(len(self.process.states)) for j in range(self.timelimit)]
+        # Define mdp_state as (last sampled state, time since last sample) i.e. (s,t)
+        self.states = [mdp_state(i,j) for i in range(len(self.process.states)) for j in range(self.timelimit)]
         
         
          
@@ -98,6 +97,19 @@ class MDP_sampler:
         pi = mdptoolbox.mdp.PolicyIteration(self.transitions, self.reward, 0.9)
         pi.run()
         self.policy = pi.policy
+        
+    
+    def update_state(self, action, sampled_value=None):
+        if action:
+            self.state = mdp_state(sampled_value, 0)
+            
+        else:
+            self.state = mdp_state(self.state.last_sampled_value, self.state.last_sample_time + 1)
+            
+        return self.state
+    
+    def get_current_action(self):
+        return self.policy[self.state.last_sampled_value * self.timelimit + self.state.last_sample_time]
         
 
 

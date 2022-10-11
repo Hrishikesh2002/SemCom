@@ -2,8 +2,6 @@ import numpy as np
 from MP import MP
 from scipy.stats import bernoulli
 
-# debugMode = False
-
 
 
 class Battery:
