@@ -1,16 +1,17 @@
 from mdp_sampler import MDP_sampler
 from process import MP
-
+from alg_sampler import alg_sampler
+from scipy.stats import dist
 
 
 
 class Simulator:
-    
-    
+
     def __init__(self) -> None:
         self.process = MP(states=[0,1], transitions=[[0.7, 0.3], [0.3, 0.7]])
         self.mdp_sampler = MDP_sampler(process=self.process, timelimit=5, sampling_cost=0.5, f=[[0,1], [1,0]])
-        # self.bernoulli_sampler = dist.bernoulli(0.5)
+        self.bernoulli_sampler = dist.bernoulli(0.5)
+        self.alg_sampler = alg_sampler
         
     def get_policy(self):
         self.mdp_sampler.solve()
@@ -26,14 +27,3 @@ driver()
         
         
         
-    
-        
-
-        
-        
-    
-    
-    
-    
-    
-    

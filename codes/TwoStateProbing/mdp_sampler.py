@@ -92,13 +92,13 @@ class MDP_sampler:
                         self.reward[i][j] = -1 * math.inf
                 
                     
-        
-                    
-                    
-    
-    def solve(self):
+
+    def get_policy(self):
         
         pi = mdptoolbox.mdp.PolicyIteration(self.transitions, self.reward, 0.9)
         pi.run()
-        print(pi.policy)
+        self.policy = pi.policy
+        
+
+
         
