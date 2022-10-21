@@ -2,8 +2,6 @@ from process import MP
 from mdp_sampler import MDP_sampler
 from alg_sampler import alg_sampler
 from Clock import discrete_clock
-from def_state import alg_state
-from def_state import mdp_state
 import numpy as np
 
 import scipy.stats as dist
@@ -12,7 +10,6 @@ class Simulator:
 
     def __init__(self, time_horizon=30) -> None:
         
-        print("Heyy..You are in the simulator class!!")
         
         self.process = MP(states=[0,1], transitions=[[0.7, 0.3], [0.3, 0.7]])
         self.clock = discrete_clock()
@@ -39,28 +36,28 @@ class Simulator:
         
     def error_expectation(self, last_sampled_value, time_difference):  # This is the E[f(s(t), s_hat(t))] function
         transitions_new = np.linalg.matrix_power(self.process.transitions, time_difference)
-        expectation =  np.dot(transitions_new[last_sampled_value] , self.f[self.mle])
+        expectation =  np.dot(transitions_new[last_sampled_value] , self.mdp_sampler.f[self.mdp_sampler.mle])
         return expectation
         
 
     def updateError(self, mdp_action, alg_action, bernoulli_action):
         if mdp_action:
-            self.mdp_error += self.mdp.sampling_cost
+            self.mdp_error += self.mdp_sampler.sampling_cost
             
         else:
             self.mdp_error += self.error_expectation(self.mdp_sampler.mle, self.mdp_sampler.state.last_sample_time)
             
         if alg_action:
-            self.alg_error += self.alg.sampling_cost
+            self.alg_error += self.alg_sampler.sampling_cost
             
         else:
-            self.alg_error += self.error_expectation(self.alg_sampler.mle, self.alg_sampler.state.time_since_last_sample)
+            self.alg_error += self.error_expectation(self.alg_sampler.mle, self.alg_sampler.state.last_sample_time)
             
         if bernoulli_action:
             self.bernoulli_error += 0.5
         
         else:
-            pass
+            self.bernoulli_error += self.error_expectation(0, 1)
         
         
         
@@ -69,14 +66,12 @@ class Simulator:
     
     def simulate(self):
         
-        print("Hello!!!")
         
         actual_value = 0
         
         while True:
             self.clock.increment()
             curr_time = self.clock.get_time()
-            print(curr_time)
             
             if curr_time > self.time_horizon:
                 break
@@ -114,3 +109,47 @@ class Simulator:
             self.actual_values.append(actual_value)
             
             self.updateError(mdp_action, alg_action, bernoulli_action)
+            
+    # choose one of the samplers and return the error after convergence
+    # def simulate_one(self, sampler):
+        
+    #     if sampler == "mdp":
+    #         sampler = self.mdp_sampler
+            
+    #     if sampler == "alg":
+    #         sampler = self.alg_sampler
+            
+    #     if sampler == "bernoulli":
+    #         sampler = self.bernoulli_sampler
+        
+            
+    #     actual_value = 0
+        
+    #     while True:
+    #         self.clock.increment()
+    #         curr_time = self.clock.get_time()
+            
+    #         if curr_time > self.time_horizon:
+    #             break
+            
+            
+    #         actual_value = self.process.sample_next_state(actual_value)
+            
+            
+    #         action = sampler.get_current_action()
+            
+    #         if action:
+    #             self.mdp_values.append(actual_value)
+                
+    #         else:
+    #             self.mdp_values.append(sampler.mle)
+                
+        
+            
+    #         self.sampler.update_state(action, actual_value)
+            
+    #         self.actual_values.append(actual_value)
+            
+    #         self.updateError(action)
+            
+            
