@@ -90,7 +90,8 @@ class MDP_sampler:
                     if current_state.last_sample_time == self.timelimit - 1 :
                         self.reward[i][j] = -1 * math.inf
                 
-                    
+
+# Functions needed for the simulation       
 
     def get_policy(self):
         
@@ -110,7 +111,4 @@ class MDP_sampler:
     
     def get_current_action(self):
         return self.policy[self.state.last_sampled_value * self.timelimit + self.state.last_sample_time]
-        
-
-
         
